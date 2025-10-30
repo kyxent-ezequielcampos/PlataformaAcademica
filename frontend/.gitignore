@@ -1,0 +1,23 @@
+# Compilados y binarios
+bin/
+obj/
+
+# Configuraciones locales
+*.user
+*.suo
+*.dotCover
+*.vs/
+
+# Archivos de configuración de entorno local
+appsettings.*.json
+
+# Paquetes de NuGet
+*.nupkg
+*.snupkg
+packages/
+
+# Logs
+*.log
+
+# Carpeta de build temporal
+out/
