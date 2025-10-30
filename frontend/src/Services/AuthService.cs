@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using frontend.Models;
+using frontend.Config;
 
 public class AuthService
 {
@@ -13,9 +14,9 @@ public class AuthService
     public AuthService()
     {
         var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var appFolder = Path.Combine(appData, "SistemaAcademico");
+        var appFolder = Path.Combine(appData, AppConfig.App.AppFolderName);
         Directory.CreateDirectory(appFolder);
-        _sessionFile = Path.Combine(appFolder, "session.json");
+        _sessionFile = Path.Combine(appFolder, AppConfig.App.SessionFileName);
     }
 
     public Usuario? CurrentUser => _currentUser ??= LoadSession();

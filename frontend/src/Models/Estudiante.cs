@@ -1,3 +1,5 @@
+using System;
+
 namespace frontend.Models;
 
 public class Estudiante

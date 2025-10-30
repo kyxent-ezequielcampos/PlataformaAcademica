@@ -14,7 +14,7 @@ public class AppLayout : Grid
     {
         ColumnDefinitions = new ColumnDefinitions("Auto, *");
         RowDefinitions = new RowDefinitions("Auto, *");
-        Background = Colors.Background;
+        Background = AppColors.Background;
 
         // Header
         var header = new Header(parentWindow);
@@ -31,7 +31,7 @@ public class AppLayout : Grid
         // Content Area
         _contentArea = new Border
         {
-            Background = Colors.Background,
+            Background = AppColors.Background,
             Padding = new Avalonia.Thickness(24)
         };
         Grid.SetColumn(_contentArea, 1);

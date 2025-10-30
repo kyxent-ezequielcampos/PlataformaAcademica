@@ -1,7 +1,65 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="frontend.App">
+             x:Class="frontend.App"
+             RequestedThemeVariant="Light">
+
     <Application.Styles>
         <FluentTheme />
+        
+        <!-- FORZAR COLORES EN TEXTBOX - FONDO BLANCO Y TEXTO NEGRO SIEMPRE -->
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="CaretBrush" Value="#FF6B9D"/>
+            <Setter Property="SelectionBrush" Value="#FFE5EF"/>
+            <Setter Property="SelectionForegroundBrush" Value="Black"/>
+        </Style>
+        
+        <Style Selector="TextBox:pointerover">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        
+        <Style Selector="TextBox:focus">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        
+        <Style Selector="TextBox:disabled">
+            <Setter Property="Background" Value="#F3F4F6"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+        </Style>
+        
+        <!-- FORZAR COLORES EN DATEPICKER -->
+        <Style Selector="DatePicker">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        
+        <Style Selector="DatePicker:pointerover">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        
+        <Style Selector="DatePicker:focus">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        
+        <!-- FORZAR COLORES EN NUMERICUPDOWN -->
+        <Style Selector="NumericUpDown">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        
+        <Style Selector="NumericUpDown:pointerover">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        
+        <Style Selector="NumericUpDown:focus">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
     </Application.Styles>
 </Application>

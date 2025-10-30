@@ -1,3 +1,5 @@
+using System;
+
 namespace frontend.Models;
 
 public class Usuario
@@ -11,6 +13,12 @@ public class Usuario
 }
 
 public class LoginRequest
+{
+    public string NombreUsuario { get; set; } = string.Empty;
+    public string Contrasena { get; set; } = string.Empty;
+}
+
+public class LoginDto
 {
     public string NombreUsuario { get; set; } = string.Empty;
     public string Contrasena { get; set; } = string.Empty;

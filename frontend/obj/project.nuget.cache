@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "U2tS1x3NsiE=",
+  "dgSpecHash": "zpf3mn56alo=",
   "success": true,
   "projectFilePath": "/home/ezequielcampos/Documents/apps/PlataformaAcademica/frontend/frontend.csproj",
   "expectedPackageFiles": [
@@ -31,6 +31,9 @@
     "/home/ezequielcampos/.nuget/packages/skiasharp.nativeassets.webassembly/2.88.9/skiasharp.nativeassets.webassembly.2.88.9.nupkg.sha512",
     "/home/ezequielcampos/.nuget/packages/skiasharp.nativeassets.win32/2.88.9/skiasharp.nativeassets.win32.2.88.9.nupkg.sha512",
     "/home/ezequielcampos/.nuget/packages/system.io.pipelines/8.0.0/system.io.pipelines.8.0.0.nupkg.sha512",
+    "/home/ezequielcampos/.nuget/packages/system.net.http.json/8.0.0/system.net.http.json.8.0.0.nupkg.sha512",
+    "/home/ezequielcampos/.nuget/packages/system.text.encodings.web/8.0.0/system.text.encodings.web.8.0.0.nupkg.sha512",
+    "/home/ezequielcampos/.nuget/packages/system.text.json/8.0.0/system.text.json.8.0.0.nupkg.sha512",
     "/home/ezequielcampos/.nuget/packages/tmds.dbus.protocol/0.21.2/tmds.dbus.protocol.0.21.2.nupkg.sha512"
   ],
   "logs": []

@@ -5,27 +5,60 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Net;
 
 public class ApiService
 {
     private readonly HttpClient _httpClient;
-    private readonly string _baseUrl = "http://localhost:5030/api";
+    private readonly string _baseUrl = "http://localhost:5130/api";
 
     public ApiService()
     {
         _httpClient = new HttpClient
         {
-            BaseAddress = new Uri(_baseUrl)
+            Timeout = TimeSpan.FromSeconds(30)
         };
+        
+        // Configurar headers por defecto
+        _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
     }
 
     public async Task<T?> GetAsync<T>(string endpoint)
     {
         try
         {
-            var response = await _httpClient.GetAsync(endpoint);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>();
+            var fullUrl = $"{_baseUrl}{endpoint}";
+            Console.WriteLine($"🔥 GET {fullUrl}");
+            var response = await _httpClient.GetAsync(fullUrl);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(content))
+                    return default;
+                    
+                return JsonSerializer.Deserialize<T>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            
+            return default;
+        }
+        catch (HttpRequestException)
+        {
+            // Error de conexión
+            return default;
+        }
+        catch (TaskCanceledException)
+        {
+            // Timeout
+            return default;
+        }
+        catch (JsonException)
+        {
+            // Error de deserialización
+            return default;
         }
         catch
         {
@@ -37,12 +70,56 @@ public class ApiService
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync(endpoint, data);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<TResponse>();
+            var fullUrl = $"{_baseUrl}{endpoint}";
+            Console.WriteLine($"� POST  {fullUrl}");
+            Console.WriteLine($"📦 Data: {JsonSerializer.Serialize(data)}");
+            
+            var response = await _httpClient.PostAsJsonAsync(fullUrl, data, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            
+            Console.WriteLine($"✅ Status: {response.StatusCode}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"📥 Response: {content}");
+                
+                if (string.IsNullOrEmpty(content))
+                    return default;
+                    
+                return JsonSerializer.Deserialize<TResponse>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"❌ Error Response: {errorContent}");
+            }
+            
+            return default;
         }
-        catch
+        catch (HttpRequestException ex)
         {
+            Console.WriteLine($"❌ HttpRequestException: {ex.Message}");
+            return default;
+        }
+        catch (TaskCanceledException ex)
+        {
+            Console.WriteLine($"❌ TaskCanceledException: {ex.Message}");
+            return default;
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"❌ JsonException: {ex.Message}");
+            return default;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Exception: {ex.Message}");
             return default;
         }
     }
@@ -51,8 +128,22 @@ public class ApiService
     {
         try
         {
-            var response = await _httpClient.PutAsJsonAsync(endpoint, data);
+            var fullUrl = $"{_baseUrl}{endpoint}";
+            Console.WriteLine($"🔥 PUT {fullUrl}");
+            var response = await _httpClient.PutAsJsonAsync(fullUrl, data, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            
             return response.IsSuccessStatusCode;
+        }
+        catch (HttpRequestException)
+        {
+            return false;
+        }
+        catch (TaskCanceledException)
+        {
+            return false;
         }
         catch
         {
@@ -64,12 +155,44 @@ public class ApiService
     {
         try
         {
-            var response = await _httpClient.DeleteAsync(endpoint);
+            var fullUrl = $"{_baseUrl}{endpoint}";
+            Console.WriteLine($"🔥 DELETE {fullUrl}");
+            var response = await _httpClient.DeleteAsync(fullUrl);
             return response.IsSuccessStatusCode;
+        }
+        catch (HttpRequestException)
+        {
+            return false;
+        }
+        catch (TaskCanceledException)
+        {
+            return false;
         }
         catch
         {
             return false;
         }
+    }
+
+    public async Task<bool> TestConnectionAsync()
+    {
+        try
+        {
+            var healthUrl = "http://localhost:5130/api/health";
+            Console.WriteLine($"🏥 Testing connection to {healthUrl}");
+            var response = await _httpClient.GetAsync(healthUrl);
+            Console.WriteLine($"🏥 Health check status: {response.StatusCode}");
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Health check failed: {ex.Message}");
+            return false;
+        }
+    }
+
+    public void Dispose()
+    {
+        _httpClient?.Dispose();
     }
 }

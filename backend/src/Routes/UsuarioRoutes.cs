@@ -62,6 +62,46 @@ public class UsuarioRoutes : CarterModule
             return Results.Ok(usuario);
         });
 
+        // POST: Crear usuario por defecto (solo para desarrollo)
+        app.MapPost("/create-default", async (DatabaseConfig dbConfig) =>
+        {
+            try
+            {
+                var repository = new UsuarioRepository(dbConfig);
+                var controller = new UsuarioController(repository);
+                
+                // Crear usuario admin por defecto
+                var adminDto = new CreateUsuarioDto
+                {
+                    NombreUsuario = "admin",
+                    Contrasena = "admin123",
+                    Rol = "administrador"
+                };
+                
+                var adminId = await controller.Create(adminDto);
+                
+                // Crear usuario ezequielcampos
+                var userDto = new CreateUsuarioDto
+                {
+                    NombreUsuario = "ezequielcampos",
+                    Contrasena = "ezequiel123",
+                    Rol = "administrador"
+                };
+                
+                var userId = await controller.Create(userDto);
+                
+                return Results.Ok(new { 
+                    message = "Usuarios creados", 
+                    adminId, 
+                    userId 
+                });
+            }
+            catch (Exception ex)
+            {
+                return Results.BadRequest(new { error = ex.Message });
+            }
+        });
+
         // DELETE: Eliminar usuario (soft delete)
         app.MapDelete("/{id:int}", async (int id, DatabaseConfig dbConfig) =>
         {
