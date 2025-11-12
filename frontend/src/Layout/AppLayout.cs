@@ -58,6 +58,10 @@ public class AppLayout : Grid
             "estudiantes" => new EstudiantesView(),
             "docentes" => new DocentesView(),
             "asignaturas" => new AsignaturasView(),
+            "grados" => new GradosView(),
+            "matriculas" => new MatriculasView(),
+            "asignaciones" => new AsignacionesView(),
+            "calificaciones" => new CalificacionesView(),
             _ => new HomeView()
         };
 

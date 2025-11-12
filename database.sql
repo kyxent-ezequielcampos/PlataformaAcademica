@@ -179,9 +179,9 @@ INNER JOIN calificaciones c ON i.id_inscripcion = c.id_inscripcion;
 
 -- Usuarios
 INSERT INTO usuarios (nombre_usuario, contrasena, rol) VALUES
-('admin', '$2a$10$abcdefghijklmnopqrstuv', 'administrador'),
-('prof_garcia', '$2a$10$abcdefghijklmnopqrstuv', 'docente'),
-('secretaria', '$2a$10$abcdefghijklmnopqrstuv', 'secretario');
+('admin', '$2a$10$abcdefghijklmnopqrstuuEZ4tpXm4W5SeJkDbuNdfJ.CF0.Wc2V2', 'administrador'),
+('prof_ezequiel', '$2a$10$abcdefghijklmnopqrstuuEZ4tpXm4W5SeJkDbuNdfJ.CF0.Wc2V2', 'docente'),
+('secretaria', '$2a$10$abcdefghijklmnopqrstuuEZ4tpXm4W5SeJkDbuNdfJ.CF0.Wc2V2', 'secretario');
 
 -- Grados
 INSERT INTO grados (nombre, nivel, seccion) VALUES

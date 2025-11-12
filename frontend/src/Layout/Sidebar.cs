@@ -62,9 +62,19 @@ public class Sidebar : Border
 
         // Menú items
         AddMenuItem(stack, "🏠", "Inicio", "home", true);
+        
+        // Sección de Gestión Básica
+        AddSectionTitle(stack, "GESTIÓN BÁSICA");
         AddMenuItem(stack, "👨‍🎓", "Estudiantes", "estudiantes");
         AddMenuItem(stack, "👨‍🏫", "Docentes", "docentes");
         AddMenuItem(stack, "📖", "Asignaturas", "asignaturas");
+        AddMenuItem(stack, "🎓", "Grados", "grados");
+        
+        // Sección de Gestión Académica
+        AddSectionTitle(stack, "GESTIÓN ACADÉMICA");
+        AddMenuItem(stack, "📝", "Matrículas", "matriculas");
+        AddMenuItem(stack, "👨‍🏫", "Asignaciones", "asignaciones");
+        AddMenuItem(stack, "📊", "Calificaciones", "calificaciones");
 
         Child = stack;
     }
@@ -149,5 +159,19 @@ public class Sidebar : Border
         };
 
         parent.Children.Add(btn);
+    }
+
+    private void AddSectionTitle(StackPanel parent, string title)
+    {
+        var titleBlock = new TextBlock
+        {
+            Text = title,
+            FontSize = 11,
+            FontWeight = FontWeight.Bold,
+            Foreground = new SolidColorBrush(Color.Parse("#A78BFA")),
+            Opacity = 0.6,
+            Margin = new Avalonia.Thickness(16, 20, 0, 8)
+        };
+        parent.Children.Add(titleBlock);
     }
 }
