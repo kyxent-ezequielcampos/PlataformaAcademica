@@ -222,60 +222,101 @@ public class AsignacionesView : StackPanel
                 }
             }
         });
+        _docentes = await _apiService.GetAsync<List<Docente>>("/docentes") ?? new();
+
+        // Insertar placeholder correcto (Docente, no Grado)
+        _docentes.Insert(0, new Docente
+        {
+            IdDocente = 0,
+            Nombres = "Seleccione un docente *",
+            Apellidos = ""
+        });
 
         var cmbDocente = new ComboBox
         {
-            PlaceholderText = "Seleccione un docente *",
             ItemsSource = _docentes,
             Height = 45,
-            FontSize = 14
+            FontSize = 14,
+            SelectedIndex = 0
         };
+
         if (_docentes.Any())
         {
             cmbDocente.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<Docente>((doc, _) =>
-                new TextBlock { Text = doc != null ? $"{doc.Nombres} {doc.Apellidos}" : "Sin nombre" }
+                new TextBlock { Text = $"{doc.Nombres} {doc.Apellidos}".Trim() }
             );
+
             if (_isEditing && asignacion != null)
             {
-                cmbDocente.SelectedItem = _docentes.FirstOrDefault(d => d.IdDocente == asignacion.IdDocente);
+                cmbDocente.SelectedItem = _docentes
+                    .FirstOrDefault(d => d.IdDocente == asignacion.IdDocente);
             }
         }
+
+
+        _asignaturas = await _apiService.GetAsync<List<Asignatura>>("/asignaturas") ?? new();
+
+        // Insertar placeholder correcto
+        _asignaturas.Insert(0, new Asignatura
+        {
+            IdAsignatura = 0,
+            Nombre = "Seleccione una asignatura *"
+        });
 
         var cmbAsignatura = new ComboBox
         {
-            PlaceholderText = "Seleccione una asignatura *",
             ItemsSource = _asignaturas,
             Height = 45,
-            FontSize = 14
+            FontSize = 14,
+            SelectedIndex = 0
         };
+
         if (_asignaturas.Any())
         {
             cmbAsignatura.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<Asignatura>((asig, _) =>
-                new TextBlock { Text = asig != null ? asig.Nombre : "Sin nombre" }
+                new TextBlock { Text = asig.Nombre }
             );
+
+            // Seleccionar al editar
             if (_isEditing && asignacion != null)
             {
-                cmbAsignatura.SelectedItem = _asignaturas.FirstOrDefault(a => a.IdAsignatura == asignacion.IdAsignatura);
+                cmbAsignatura.SelectedItem = _asignaturas
+                    .FirstOrDefault(a => a.IdAsignatura == asignacion.IdAsignatura);
             }
         }
 
+
+        _grados = await _apiService.GetAsync<List<Grado>>("/grados") ?? new();
+
+        // Insertar placeholder correcto
+        _grados.Insert(0, new Grado
+        {
+            IdGrado = 0,
+            Nombre = "Seleccione un grado *"
+        });
+
         var cmbGrado = new ComboBox
         {
-            PlaceholderText = "Seleccione un grado *",
             ItemsSource = _grados,
             Height = 45,
-            FontSize = 14
+            FontSize = 14,
+            SelectedIndex = 0
         };
+
         if (_grados.Any())
         {
-            cmbGrado.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<Grado>((grado, _) =>
-                new TextBlock { Text = grado != null ? grado.Nombre : "Sin nombre" }
+            cmbGrado.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<Grado>((grd, _) =>
+                new TextBlock { Text = grd.Nombre }
             );
+
+            // Seleccionar al editar
             if (_isEditing && asignacion != null)
             {
-                cmbGrado.SelectedItem = _grados.FirstOrDefault(g => g.IdGrado == asignacion.IdGrado);
+                cmbGrado.SelectedItem = _grados
+                    .FirstOrDefault(g => g.IdGrado == asignacion.IdGrado);
             }
         }
+
 
         var txtCiclo = new TextBox
         {
