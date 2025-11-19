@@ -48,12 +48,25 @@ public class CalificacionesView : StackPanel
         };
         Grid.SetColumn(title, 0);
 
+        var actionsPanel = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 12,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        var btnReporte = new StyledButton("📄 Generar Reporte", ButtonStyle.Outline);
+        btnReporte.Click += async (s, e) => await GenerarReporteNotas();
+
         var btnNuevo = new StyledButton("+ Nueva Calificación", ButtonStyle.Primary);
         btnNuevo.Click += async (s, e) => await MostrarFormulario();
-        Grid.SetColumn(btnNuevo, 1);
+
+        actionsPanel.Children.Add(btnReporte);
+        actionsPanel.Children.Add(btnNuevo);
+        Grid.SetColumn(actionsPanel, 1);
 
         header.Children.Add(title);
-        header.Children.Add(btnNuevo);
+        header.Children.Add(actionsPanel);
         Children.Add(header);
 
         _formContainer = new StyledCard(padding: 32) { IsVisible = false };
@@ -450,5 +463,128 @@ public class CalificacionesView : StackPanel
     private async System.Threading.Tasks.Task EditarCalificacion(Calificacion calificacion)
     {
         await MostrarFormulario(calificacion);
+    }
+
+    private async System.Threading.Tasks.Task GenerarReporteNotas()
+    {
+        // Crear diálogo para seleccionar estudiante y ciclo
+        var dialog = new Window
+        {
+            Title = "Generar Reporte de Notas",
+            Width = 500,
+            Height = 350,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            CanResize = false
+        };
+
+        var mainPanel = new StackPanel
+        {
+            Margin = new Avalonia.Thickness(30),
+            Spacing = 20
+        };
+
+        mainPanel.Children.Add(new TextBlock
+        {
+            Text = "📄 Generar Reporte de Notas",
+            FontSize = 20,
+            FontWeight = FontWeight.Bold,
+            Foreground = new SolidColorBrush(Color.Parse("#F59E0B"))
+        });
+
+        // Cargar estudiantes
+        var estudiantes = await _apiService.GetAsync<List<Estudiante>>("/estudiantes") ?? new();
+        estudiantes.Insert(0, new Estudiante { IdEstudiante = 0, Nombres = "Seleccione un estudiante", Apellidos = "" });
+
+        var cmbEstudiante = new ComboBox
+        {
+            ItemsSource = estudiantes,
+            SelectedIndex = 0,
+            Height = 45,
+            FontSize = 14
+        };
+        cmbEstudiante.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<Estudiante>((est, _) =>
+            new TextBlock { Text = est.IdEstudiante == 0 ? est.Nombres : $"{est.Nombres} {est.Apellidos}" }
+        );
+
+        var txtCiclo = new TextBox
+        {
+            Watermark = "Ciclo escolar (ej: 2025)",
+            Text = DateTime.Now.Year.ToString(),
+            Height = 45,
+            FontSize = 14
+        };
+
+        var errorText = new TextBlock
+        {
+            Foreground = AppColors.Danger,
+            FontSize = 14,
+            IsVisible = false
+        };
+
+        var btnActions = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 12,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Margin = new Avalonia.Thickness(0, 20, 0, 0)
+        };
+
+        var btnCancelar = new StyledButton("Cancelar", ButtonStyle.Outline);
+        btnCancelar.Click += (s, e) => dialog.Close();
+
+        var btnGenerar = new StyledButton("📄 Generar PDF", ButtonStyle.Primary);
+        btnGenerar.Click += async (s, e) =>
+        {
+            var estudianteSeleccionado = (Estudiante?)cmbEstudiante.SelectedItem;
+            if (estudianteSeleccionado == null || estudianteSeleccionado.IdEstudiante == 0 || string.IsNullOrWhiteSpace(txtCiclo.Text))
+            {
+                errorText.Text = "⚠️ Debe seleccionar un estudiante y especificar el ciclo escolar";
+                errorText.IsVisible = true;
+                return;
+            }
+
+            var pdfBytes = await _apiService.DownloadPdfAsync($"/reportes/notas/{estudianteSeleccionado.IdEstudiante}?cicloEscolar={txtCiclo.Text}");
+            
+            if (pdfBytes != null && pdfBytes.Length > 0)
+            {
+                var saveDialog = new SaveFileDialog
+                {
+                    Title = "Guardar Reporte de Notas",
+                    DefaultExtension = "pdf",
+                    InitialFileName = $"Reporte_Notas_{estudianteSeleccionado.Nombres}_{estudianteSeleccionado.Apellidos}_{txtCiclo.Text}.pdf"
+                };
+                saveDialog.Filters.Add(new FileDialogFilter { Name = "PDF", Extensions = { "pdf" } });
+
+                var result = await saveDialog.ShowAsync(dialog);
+                if (!string.IsNullOrEmpty(result))
+                {
+                    await System.IO.File.WriteAllBytesAsync(result, pdfBytes);
+                    dialog.Close();
+                    await frontend.Utils.MessageBox.ShowInfoAsync(
+                        TopLevel.GetTopLevel(this) as Window ?? new Window(),
+                        "✅ Éxito",
+                        "Reporte generado y guardado correctamente."
+                    );
+                }
+            }
+            else
+            {
+                errorText.Text = "❌ No se pudo generar el reporte. Verifique que el estudiante tenga calificaciones.";
+                errorText.IsVisible = true;
+            }
+        };
+
+        btnActions.Children.Add(btnCancelar);
+        btnActions.Children.Add(btnGenerar);
+
+        mainPanel.Children.Add(new StyledLabel("Estudiante", LabelStyle.Title));
+        mainPanel.Children.Add(cmbEstudiante);
+        mainPanel.Children.Add(new StyledLabel("Ciclo Escolar", LabelStyle.Title));
+        mainPanel.Children.Add(txtCiclo);
+        mainPanel.Children.Add(errorText);
+        mainPanel.Children.Add(btnActions);
+
+        dialog.Content = mainPanel;
+        await dialog.ShowDialog(TopLevel.GetTopLevel(this) as Window ?? new Window());
     }
 }

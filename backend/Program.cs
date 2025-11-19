@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCarter();
 builder.Services.AddCors();
 builder.Services.AddSingleton<DatabaseConfig>();
+builder.Services.AddScoped<SistemaAcademico.Repositories.ReporteRepository>();
+builder.Services.AddScoped<SistemaAcademico.Services.PdfService>();
 
 // Agregar logging
 builder.Services.AddLogging();

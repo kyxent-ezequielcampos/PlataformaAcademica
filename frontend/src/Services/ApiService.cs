@@ -191,6 +191,29 @@ public class ApiService
         }
     }
 
+    public async Task<byte[]?> DownloadPdfAsync(string endpoint)
+    {
+        try
+        {
+            var fullUrl = $"{_baseUrl}{endpoint}";
+            Console.WriteLine($"📄 Downloading PDF from {fullUrl}");
+            var response = await _httpClient.GetAsync(fullUrl);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsByteArrayAsync();
+            }
+            
+            Console.WriteLine($"❌ PDF download failed: {response.StatusCode}");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ PDF download exception: {ex.Message}");
+            return null;
+        }
+    }
+
     public void Dispose()
     {
         _httpClient?.Dispose();

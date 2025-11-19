@@ -49,12 +49,25 @@ public class MatriculasView : StackPanel
         };
         Grid.SetColumn(title, 0);
 
+        var actionsPanel = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 12,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        var btnReporte = new StyledButton("📄 Generar Reporte", ButtonStyle.Outline);
+        btnReporte.Click += async (s, e) => await GenerarReporteMatriculas();
+
         var btnNuevo = new StyledButton("+ Nueva Matrícula", ButtonStyle.Primary);
         btnNuevo.Click += async (s, e) => await MostrarFormulario();
-        Grid.SetColumn(btnNuevo, 1);
+
+        actionsPanel.Children.Add(btnReporte);
+        actionsPanel.Children.Add(btnNuevo);
+        Grid.SetColumn(actionsPanel, 1);
 
         header.Children.Add(title);
-        header.Children.Add(btnNuevo);
+        header.Children.Add(actionsPanel);
         Children.Add(header);
 
         _formContainer = new StyledCard(padding: 32) { IsVisible = false };
@@ -353,5 +366,134 @@ public class MatriculasView : StackPanel
     private async System.Threading.Tasks.Task EditarMatricula(Matricula matricula)
     {
         await MostrarFormulario(matricula);
+    }
+
+    private async System.Threading.Tasks.Task GenerarReporteMatriculas()
+    {
+        // Crear diálogo para seleccionar filtros
+        var dialog = new Window
+        {
+            Title = "Generar Listado de Matrículas",
+            Width = 500,
+            Height = 350,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            CanResize = false
+        };
+
+        var mainPanel = new StackPanel
+        {
+            Margin = new Avalonia.Thickness(30),
+            Spacing = 20
+        };
+
+        mainPanel.Children.Add(new TextBlock
+        {
+            Text = "📄 Generar Listado de Matrículas",
+            FontSize = 20,
+            FontWeight = FontWeight.Bold,
+            Foreground = new SolidColorBrush(Color.Parse("#10B981"))
+        });
+
+        var txtCiclo = new TextBox
+        {
+            Watermark = "Ciclo escolar (ej: 2025)",
+            Text = DateTime.Now.Year.ToString(),
+            Height = 45,
+            FontSize = 14
+        };
+
+        // Cargar grados
+        var grados = await _apiService.GetAsync<List<Grado>>("/grados") ?? new();
+        grados.Insert(0, new Grado { IdGrado = 0, Nombre = "Todos los grados" });
+
+        var cmbGrado = new ComboBox
+        {
+            ItemsSource = grados,
+            SelectedIndex = 0,
+            Height = 45,
+            FontSize = 14
+        };
+        cmbGrado.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<Grado>((g, _) =>
+            new TextBlock { Text = g.Nombre }
+        );
+
+        var errorText = new TextBlock
+        {
+            Foreground = AppColors.Danger,
+            FontSize = 14,
+            IsVisible = false
+        };
+
+        var btnActions = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 12,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Margin = new Avalonia.Thickness(0, 20, 0, 0)
+        };
+
+        var btnCancelar = new StyledButton("Cancelar", ButtonStyle.Outline);
+        btnCancelar.Click += (s, e) => dialog.Close();
+
+        var btnGenerar = new StyledButton("📄 Generar PDF", ButtonStyle.Primary);
+        btnGenerar.Click += async (s, e) =>
+        {
+            if (string.IsNullOrWhiteSpace(txtCiclo.Text))
+            {
+                errorText.Text = "⚠️ Debe especificar el ciclo escolar";
+                errorText.IsVisible = true;
+                return;
+            }
+
+            var gradoSeleccionado = (Grado?)cmbGrado.SelectedItem;
+            var endpoint = $"/reportes/matriculas?cicloEscolar={txtCiclo.Text}";
+            if (gradoSeleccionado != null && gradoSeleccionado.IdGrado > 0)
+            {
+                endpoint += $"&idGrado={gradoSeleccionado.IdGrado}";
+            }
+
+            var pdfBytes = await _apiService.DownloadPdfAsync(endpoint);
+            
+            if (pdfBytes != null && pdfBytes.Length > 0)
+            {
+                var saveDialog = new SaveFileDialog
+                {
+                    Title = "Guardar Listado de Matrículas",
+                    DefaultExtension = "pdf",
+                    InitialFileName = $"Listado_Matriculas_{txtCiclo.Text}.pdf"
+                };
+                saveDialog.Filters.Add(new FileDialogFilter { Name = "PDF", Extensions = { "pdf" } });
+
+                var result = await saveDialog.ShowAsync(dialog);
+                if (!string.IsNullOrEmpty(result))
+                {
+                    await System.IO.File.WriteAllBytesAsync(result, pdfBytes);
+                    dialog.Close();
+                    await frontend.Utils.MessageBox.ShowInfoAsync(
+                        TopLevel.GetTopLevel(this) as Window ?? new Window(),
+                        "✅ Éxito",
+                        "Reporte generado y guardado correctamente."
+                    );
+                }
+            }
+            else
+            {
+                errorText.Text = "❌ No se pudo generar el reporte. Verifique que existan matrículas.";
+                errorText.IsVisible = true;
+            }
+        };
+
+        btnActions.Children.Add(btnCancelar);
+        btnActions.Children.Add(btnGenerar);
+
+        mainPanel.Children.Add(new StyledLabel("Ciclo Escolar", LabelStyle.Title));
+        mainPanel.Children.Add(txtCiclo);
+        mainPanel.Children.Add(new StyledLabel("Filtrar por Grado (opcional)", LabelStyle.Title));
+        mainPanel.Children.Add(cmbGrado);
+        mainPanel.Children.Add(errorText);
+        mainPanel.Children.Add(btnActions);
+
+        dialog.Content = mainPanel;
+        await dialog.ShowDialog(TopLevel.GetTopLevel(this) as Window ?? new Window());
     }
 }
