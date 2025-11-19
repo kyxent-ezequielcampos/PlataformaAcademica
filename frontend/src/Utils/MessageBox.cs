@@ -42,17 +42,27 @@ public static class MessageBox
             HorizontalAlignment = HorizontalAlignment.Right
         };
 
-        var btnYes = new StyledButton("Sí", ButtonStyle.Primary) { Width = 80 };
-        btnYes.Click += (s, e) =>
+        // --- BOTÓN "NO" ---
+        var btnNo = new StyledButton("No", ButtonStyle.Outline)
         {
-            result = true;
-            dialog.Close();
+            MinWidth = 90,
+            Padding = new Avalonia.Thickness(14, 8)
         };
-
-        var btnNo = new StyledButton("No", ButtonStyle.Outline) { Width = 80 };
         btnNo.Click += (s, e) =>
         {
             result = false;
+            dialog.Close();
+        };
+
+        // --- BOTÓN "SÍ" ---
+        var btnYes = new StyledButton("Sí", ButtonStyle.Primary)
+        {
+            MinWidth = 90,
+            Padding = new Avalonia.Thickness(14, 8)
+        };
+        btnYes.Click += (s, e) =>
+        {
+            result = true;
             dialog.Close();
         };
 
@@ -91,11 +101,14 @@ public static class MessageBox
             TextWrapping = TextWrapping.Wrap
         });
 
-        var btnOk = new StyledButton("Aceptar", ButtonStyle.Primary) 
-        { 
-            Width = 80,
+        // --- BOTÓN "ACEPTAR" ---
+        var btnOk = new StyledButton("Aceptar", ButtonStyle.Primary)
+        {
+            MinWidth = 120,
+            Padding = new Avalonia.Thickness(16, 8),
             HorizontalAlignment = HorizontalAlignment.Right
         };
+
         btnOk.Click += (s, e) => dialog.Close();
 
         content.Children.Add(btnOk);

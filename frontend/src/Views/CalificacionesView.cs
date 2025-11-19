@@ -298,24 +298,37 @@ public class CalificacionesView : StackPanel
             }
         });
 
-        var cmbInscripcion = new ComboBox
-        {
-            PlaceholderText = "Seleccione estudiante-asignatura *",
-            ItemsSource = _inscripciones,
-            Height = 45,
-            FontSize = 14,
-            IsEnabled = !_isEditing
-        };
-        if (_inscripciones.Any())
-        {
-            cmbInscripcion.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<Inscripcion>((insc, _) =>
-                new TextBlock { Text = insc != null ? $"{insc.NombreEstudiante} - {insc.NombreAsignatura}" : "Sin datos" }
-            );
-            if (_isEditing && calificacion != null)
+            var cmbInscripcion = new ComboBox
             {
-                cmbInscripcion.SelectedItem = _inscripciones.FirstOrDefault(i => i.IdInscripcion == calificacion.IdInscripcion);
+                PlaceholderText = "Seleccione estudiante-asignatura *",
+                ItemsSource = _inscripciones,
+                Height = 45,
+                FontSize = 14,
+                IsEnabled = !_isEditing
+            };
+
+            if (_inscripciones.Any())
+            {
+                cmbInscripcion.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<Inscripcion>((insc, _) =>
+                    new TextBlock
+                    {
+                        Text = insc == null
+                            ? ""   // IMPORTANTE: NO usar "Sin datos"
+                            : $"{insc.NombreEstudiante} - {insc.NombreAsignatura}"
+                    }
+                );
+
+                if (_isEditing && calificacion != null)
+                {
+                    cmbInscripcion.SelectedItem = _inscripciones
+                        .FirstOrDefault(i => i.IdInscripcion == calificacion.IdInscripcion);
+                }
             }
-        }
+            else
+            {
+                cmbInscripcion.SelectedItem = null;
+            }
+
 
         var txtPeriodo = new TextBox
         {

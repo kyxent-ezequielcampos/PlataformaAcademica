@@ -221,41 +221,45 @@ public class MatriculasView : StackPanel
             }
         });
 
+        _estudiantes.Insert(0, new Estudiante { IdEstudiante = 0, Nombres = "Seleccione un estudiante *", Apellidos = "" });
+
         var cmbEstudiante = new ComboBox
         {
-            PlaceholderText = "Seleccione un estudiante *",
             ItemsSource = _estudiantes,
             Height = 45,
+            SelectedIndex = 0,
             FontSize = 14
         };
-        if (_estudiantes.Any())
-        {
-            cmbEstudiante.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<Estudiante>((est, _) =>
-                new TextBlock { Text = est != null ? $"{est.Nombres} {est.Apellidos}" : "Sin nombre" }
-            );
-            if (_isEditing && matricula != null)
-            {
-                cmbEstudiante.SelectedItem = _estudiantes.FirstOrDefault(e => e.IdEstudiante == matricula.IdEstudiante);
+
+        cmbEstudiante.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<Estudiante>((est, _) =>
+        new TextBlock{
+                Text = est.IdEstudiante == 0 ? est.Nombres : $"{est.Nombres} {est.Apellidos}"
             }
+        
+        
+        
+      );
+
+        // Si está editando, seleccionar el estudiante real
+        if (_isEditing && matricula != null)
+        {
+            cmbEstudiante.SelectedItem = _estudiantes.FirstOrDefault(e => e.IdEstudiante == matricula.IdEstudiante);
         }
+        
+        
+        _grados.Insert(0, new Grado { IdGrado = 0, Nombre = "Seleccione un grado *" });
 
         var cmbGrado = new ComboBox
         {
-            PlaceholderText = "Seleccione un grado *",
             ItemsSource = _grados,
             Height = 45,
-            FontSize = 14
+            FontSize = 14,
+            SelectedIndex = 0
         };
-        if (_grados.Any())
-        {
-            cmbGrado.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<Grado>((grado, _) =>
-                new TextBlock { Text = grado != null ? grado.Nombre : "Sin nombre" }
-            );
-            if (_isEditing && matricula != null)
-            {
-                cmbGrado.SelectedItem = _grados.FirstOrDefault(g => g.IdGrado == matricula.IdGrado);
-            }
-        }
+        cmbGrado.ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<Grado>((g, _) =>
+         new TextBlock { Text = g.Nombre }
+         );
+        
 
         var txtCiclo = new TextBox
         {

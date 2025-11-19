@@ -154,8 +154,8 @@ public class EstudiantesView : StackPanel
 
         var detailsGrid = new Grid
         {
-            ColumnDefinitions = new ColumnDefinitions("Auto, 20, Auto"),
-            RowDefinitions = new RowDefinitions("Auto, Auto")
+            ColumnDefinitions = new ColumnDefinitions("Auto, Auto, Auto , Auto"),
+            RowDefinitions = new RowDefinitions("Auto,  Auto")
         };
 
         // Primera fila de detalles
@@ -176,7 +176,7 @@ public class EstudiantesView : StackPanel
             Margin = new Avalonia.Thickness(6, 0, 0, 0),
             VerticalAlignment = VerticalAlignment.Center
         };
-        Grid.SetColumn(docText, 0);
+        Grid.SetColumn(docText, 1);
         Grid.SetRow(docText, 0);
 
         var emailIcon = new TextBlock
@@ -196,7 +196,7 @@ public class EstudiantesView : StackPanel
             Margin = new Avalonia.Thickness(6, 0, 0, 0),
             VerticalAlignment = VerticalAlignment.Center
         };
-        Grid.SetColumn(emailText, 2);
+        Grid.SetColumn(emailText, 3);
         Grid.SetRow(emailText, 0);
 
         // Segunda fila de detalles
@@ -217,7 +217,7 @@ public class EstudiantesView : StackPanel
             Margin = new Avalonia.Thickness(6, 0, 0, 0),
             VerticalAlignment = VerticalAlignment.Center
         };
-        Grid.SetColumn(phoneText, 0);
+        Grid.SetColumn(phoneText, 1);
         Grid.SetRow(phoneText, 1);
 
         var ageIcon = new TextBlock
@@ -238,7 +238,7 @@ public class EstudiantesView : StackPanel
             Margin = new Avalonia.Thickness(6, 0, 0, 0),
             VerticalAlignment = VerticalAlignment.Center
         };
-        Grid.SetColumn(ageText, 2);
+        Grid.SetColumn(ageText, 3);
         Grid.SetRow(ageText, 1);
 
         detailsGrid.Children.Add(docIcon);
