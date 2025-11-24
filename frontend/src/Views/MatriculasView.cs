@@ -166,11 +166,17 @@ public class MatriculasView : StackPanel
         {
             Orientation = Orientation.Horizontal,
             Spacing = 8,
-            VerticalAlignment = VerticalAlignment.Center
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center
         };
 
         var btnEditar = new StyledIconButton("✏️", IconButtonStyle.Primary);
         var btnEliminar = new StyledIconButton("🗑️", IconButtonStyle.Danger);
+        btnEditar.HorizontalContentAlignment = HorizontalAlignment.Center;
+        btnEditar.VerticalContentAlignment = VerticalAlignment.Center;
+
+        btnEliminar.HorizontalContentAlignment = HorizontalAlignment.Center;
+        btnEliminar.VerticalContentAlignment = VerticalAlignment.Center;
 
         btnEditar.Click += async (s, e) => await EditarMatricula(matricula);
         btnEliminar.Click += async (s, e) =>
@@ -375,7 +381,7 @@ public class MatriculasView : StackPanel
         {
             Title = "Generar Listado de Matrículas",
             Width = 500,
-            Height = 350,
+            Height = 400,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
             CanResize = false
         };

@@ -282,15 +282,21 @@ public class DocentesView : StackPanel
         Grid.SetRowSpan(infoPanel, 2);
 
         // Botones de acción
-        var actions = new StackPanel
+       var actions = new StackPanel
         {
             Orientation = Orientation.Horizontal,
             Spacing = 8,
-            VerticalAlignment = VerticalAlignment.Center
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center
         };
 
-        var btnEditar = new StyledIconButton("✏️", IconButtonStyle.Success);
+        var btnEditar = new StyledIconButton("✏️", IconButtonStyle.Primary);
         var btnEliminar = new StyledIconButton("🗑️", IconButtonStyle.Danger);
+        btnEditar.HorizontalContentAlignment = HorizontalAlignment.Center;
+        btnEditar.VerticalContentAlignment = VerticalAlignment.Center;
+
+        btnEliminar.HorizontalContentAlignment = HorizontalAlignment.Center;
+        btnEliminar.VerticalContentAlignment = VerticalAlignment.Center;
 
         btnEditar.Click += (s, e) => EditarDocente(docente);
 

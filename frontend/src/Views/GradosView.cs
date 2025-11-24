@@ -163,11 +163,17 @@ public class GradosView : StackPanel
         {
             Orientation = Orientation.Horizontal,
             Spacing = 8,
-            VerticalAlignment = VerticalAlignment.Center
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center
         };
 
         var btnEditar = new StyledIconButton("✏️", IconButtonStyle.Primary);
         var btnEliminar = new StyledIconButton("🗑️", IconButtonStyle.Danger);
+        btnEditar.HorizontalContentAlignment = HorizontalAlignment.Center;
+        btnEditar.VerticalContentAlignment = VerticalAlignment.Center;
+
+        btnEliminar.HorizontalContentAlignment = HorizontalAlignment.Center;
+        btnEliminar.VerticalContentAlignment = VerticalAlignment.Center;
 
         btnEditar.Click += (s, e) => EditarGrado(grado);
         btnEliminar.Click += async (s, e) =>

@@ -206,10 +206,14 @@ public class CalificacionesView : StackPanel
         var grid = new Grid
         {
             ColumnDefinitions = new ColumnDefinitions("*, Auto, Auto, Auto"),
-            Margin = new Avalonia.Thickness(0, 4, 0, 4)
+            Margin = new Avalonia.Thickness(0, 4, 0, 4),
+            VerticalAlignment = VerticalAlignment.Center
         };
 
-        var asignaturaPanel = new StackPanel { Spacing = 2 };
+        var asignaturaPanel = new StackPanel { 
+            Spacing = 2,
+            VerticalAlignment = VerticalAlignment.Center
+        };
         asignaturaPanel.Children.Add(new TextBlock
         {
             Text = calificacion.NombreAsignatura ?? "Asignatura",
@@ -232,26 +236,37 @@ public class CalificacionesView : StackPanel
             CornerRadius = new Avalonia.CornerRadius(6),
             Padding = new Avalonia.Thickness(10, 4),
             Margin = new Avalonia.Thickness(8, 0, 0, 0),
+            VerticalAlignment = VerticalAlignment.Center,
             Child = new TextBlock
             {
                 Text = calificacion.Nota.ToString("0.00"),
                 FontSize = 14,
                 FontWeight = FontWeight.Bold,
-                Foreground = Brushes.White
+                Foreground = Brushes.White,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
             }
         };
         Grid.SetColumn(notaBadge, 1);
 
         var btnEditar = new StyledIconButton("✏️", IconButtonStyle.Primary)
         {
-            Margin = new Avalonia.Thickness(8, 0, 0, 0)
+            Margin = new Avalonia.Thickness(8, 0, 0, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalContentAlignment = VerticalAlignment.Center,
+            HorizontalContentAlignment = HorizontalAlignment.Center
         };
         btnEditar.Click += async (s, e) => await EditarCalificacion(calificacion);
         Grid.SetColumn(btnEditar, 2);
 
         var btnEliminar = new StyledIconButton("🗑️", IconButtonStyle.Danger)
         {
-            Margin = new Avalonia.Thickness(4, 0, 0, 0)
+            Margin = new Avalonia.Thickness(4, 0, 4, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalContentAlignment = VerticalAlignment.Center,
+            HorizontalContentAlignment = HorizontalAlignment.Center
         };
         btnEliminar.Click += async (s, e) =>
         {
@@ -472,7 +487,7 @@ public class CalificacionesView : StackPanel
         {
             Title = "Generar Reporte de Notas",
             Width = 500,
-            Height = 350,
+            Height = 415,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
             CanResize = false
         };

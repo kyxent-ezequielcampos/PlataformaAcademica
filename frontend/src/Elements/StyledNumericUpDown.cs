@@ -6,7 +6,7 @@ using Avalonia.Media;
 
 public class StyledNumericUpDown : NumericUpDown
 {
-    public StyledNumericUpDown(decimal minimum = 1, decimal maximum = 100, decimal value = 1)
+    public StyledNumericUpDown(decimal minimum = 1, decimal maximum = 200, decimal value = 1)
     {
         Minimum = minimum;
         Maximum = maximum;
